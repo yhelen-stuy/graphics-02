@@ -73,3 +73,23 @@ func (image Image) SavePPM(filename string) error {
 	f.Close()
 	return nil
 }
+
+func (image Image) DrawLineOctantI(c Color, x0, y0, x1, y1 int) error {
+	y := y0
+	lA := y1 - y0
+	lB := x0 - x1
+	lD := 2*lA + lB
+	for x := x0; x < x1; x++ {
+		err := image.plot(c, x, y)
+		if err != nil {
+			return err
+		}
+		if lD > 0 {
+			y++
+			lD += 2 * lB
+		}
+		x++
+		lD += 2 * lA
+	}
+	return nil
+}
