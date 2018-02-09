@@ -42,8 +42,8 @@ func (image Image) plot(c Color, x, y int) error {
 }
 
 func (image Image) fill(c Color) {
-	for x := 0; x < image.height; x++ {
-		for y := 0; y < image.width; y++ {
+	for y := 0; y < image.width; y++ {
+		for x := 0; x < image.height; x++ {
 			image.plot(c, x, y)
 		}
 	}
@@ -63,8 +63,8 @@ func (image Image) SavePPM(filename string) error {
 	// TODO: Take variant max color
 	buffer.WriteString(fmt.Sprintf("P3 %d %d 255\n", image.height, image.width))
 
-	for x := 0; x < image.height; x++ {
-		for y := 0; y < image.width; y++ {
+	for y := 0; y < image.width; y++ {
+		for x := 0; x < image.height; x++ {
 			buffer.WriteString(fmt.Sprintf("%d %d %d\n", image.img[x][y].r, image.img[x][y].g, image.img[x][y].b))
 		}
 	}
@@ -88,7 +88,6 @@ func (image Image) DrawLineOctantI(c Color, x0, y0, x1, y1 int) error {
 			y++
 			lD += 2 * lB
 		}
-		x++
 		lD += 2 * lA
 	}
 	return nil
