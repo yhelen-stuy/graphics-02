@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"math"
 	"os"
 )
 
@@ -75,10 +76,35 @@ func (image Image) SavePPM(filename string) error {
 	return nil
 }
 
-func (image Image) DrawLineOctantI(c Color, x0, y0, x1, y1 int) error {
+func (image Image) DrawLine(c Color, x0, y0, x1, y1 int) error {
+	if x0 > x1 {
+		x1, x0 = x0, x1
+		y1, y0 = y0, y1
+	}
+	deltaX := x1 - x0
+	deltaY := y1 - y0
+	if deltaY >= 0 {
+		if math.Abs(float64(deltaY)) <= math.Abs(float64(deltaX)) {
+			fmt.Println("OctantI")
+			image.drawLineOctantI(c, deltaY, deltaX*-1, x0, y0, x1, y1)
+		} else {
+			fmt.Println("OctantII")
+			image.drawLineOctantII(c, deltaY, deltaX*-1, x0, y0, x1, y1)
+		}
+	} else {
+		if math.Abs(float64(deltaY)) <= math.Abs(float64(deltaX)) {
+			fmt.Println("OctantVII")
+			image.drawLineOctantVII(c, deltaY, deltaX*-1, x0, y0, x1, y1)
+		} else {
+			fmt.Println("OctantVIII")
+			image.drawLineOctantVIII(c, deltaY, deltaX*-1, x0, y0, x1, y1)
+		}
+	}
+	return nil
+}
+
+func (image Image) drawLineOctantI(c Color, lA, lB, x0, y0, x1, y1 int) error {
 	y := y0
-	lA := y1 - y0
-	lB := x0 - x1
 	lD := 2*lA + lB
 	for x := x0; x < x1; x++ {
 		err := image.plot(c, x, y)
@@ -94,10 +120,8 @@ func (image Image) DrawLineOctantI(c Color, x0, y0, x1, y1 int) error {
 	return nil
 }
 
-func (image Image) DrawLineOctantII(c Color, x0, y0, x1, y1 int) error {
+func (image Image) drawLineOctantII(c Color, lA, lB, x0, y0, x1, y1 int) error {
 	x := x0
-	lA := y1 - y0
-	lB := x0 - x1
 	lD := lA + 2*lB
 	for y := y0; y < y1; y++ {
 		err := image.plot(c, x, y)
@@ -113,10 +137,8 @@ func (image Image) DrawLineOctantII(c Color, x0, y0, x1, y1 int) error {
 	return nil
 }
 
-func (image Image) DrawLineOctantVIII(c Color, x0, y0, x1, y1 int) error {
+func (image Image) drawLineOctantVIII(c Color, lA, lB, x0, y0, x1, y1 int) error {
 	y := y0
-	lA := y1 - y0
-	lB := x0 - x1
 	lD := 2*lA - lB
 	for x := x0; x < x1; x++ {
 		err := image.plot(c, x, y)
@@ -132,13 +154,10 @@ func (image Image) DrawLineOctantVIII(c Color, x0, y0, x1, y1 int) error {
 	return nil
 }
 
-func (image Image) DrawLineOctantVII(c Color, x0, y0, x1, y1 int) error {
+func (image Image) drawLineOctantVII(c Color, lA, lB, x0, y0, x1, y1 int) error {
 	x := x0
-	lA := y1 - y0
-	lB := x0 - x1
 	lD := lA - 2*lB
 	for y := y0; y > y1; y-- {
-		fmt.Println("(%d, %d)", x, y)
 		err := image.plot(c, x, y)
 		if err != nil {
 			return err
