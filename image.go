@@ -65,7 +65,8 @@ func (image Image) SavePPM(filename string) error {
 
 	for y := 0; y < image.width; y++ {
 		for x := 0; x < image.height; x++ {
-			buffer.WriteString(fmt.Sprintf("%d %d %d\n", image.img[x][y].r, image.img[x][y].g, image.img[x][y].b))
+			newY := image.width - 1 - y
+			buffer.WriteString(fmt.Sprintf("%d %d %d\n", image.img[x][newY].r, image.img[x][newY].g, image.img[x][newY].b))
 		}
 	}
 
@@ -89,6 +90,64 @@ func (image Image) DrawLineOctantI(c Color, x0, y0, x1, y1 int) error {
 			lD += 2 * lB
 		}
 		lD += 2 * lA
+	}
+	return nil
+}
+
+func (image Image) DrawLineOctantII(c Color, x0, y0, x1, y1 int) error {
+	x := x0
+	lA := y1 - y0
+	lB := x0 - x1
+	lD := lA + 2*lB
+	for y := y0; y < y1; y++ {
+		err := image.plot(c, x, y)
+		if err != nil {
+			return err
+		}
+		if lD < 0 {
+			x++
+			lD += 2 * lA
+		}
+		lD += 2 * lB
+	}
+	return nil
+}
+
+func (image Image) DrawLineOctantVIII(c Color, x0, y0, x1, y1 int) error {
+	y := y0
+	lA := y1 - y0
+	lB := x0 - x1
+	lD := 2*lA - lB
+	for x := x0; x < x1; x++ {
+		err := image.plot(c, x, y)
+		if err != nil {
+			return err
+		}
+		if lD < 0 {
+			y--
+			lD -= 2 * lB
+		}
+		lD += 2 * lA
+	}
+	return nil
+}
+
+func (image Image) DrawLineOctantVII(c Color, x0, y0, x1, y1 int) error {
+	x := x0
+	lA := y1 - y0
+	lB := x0 - x1
+	lD := lA - 2*lB
+	for y := y0; y > y1; y-- {
+		fmt.Println("(%d, %d)", x, y)
+		err := image.plot(c, x, y)
+		if err != nil {
+			return err
+		}
+		if lD > 0 {
+			x++
+			lD += 2 * lA
+		}
+		lD -= 2 * lB
 	}
 	return nil
 }
