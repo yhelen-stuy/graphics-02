@@ -81,22 +81,25 @@ func (image Image) DrawLine(c Color, x0, y0, x1, y1 int) error {
 		x1, x0 = x0, x1
 		y1, y0 = y0, y1
 	}
+
+	fmt.Printf("Drawing (%d, %d) to (%d, %d)\n", x0, y0, x1, y1)
+
 	deltaX := x1 - x0
 	deltaY := y1 - y0
 	if deltaY >= 0 {
 		if math.Abs(float64(deltaY)) <= math.Abs(float64(deltaX)) {
-			fmt.Println("OctantI")
+			// fmt.Println("OctantI")
 			image.drawLineOctantI(c, deltaY, deltaX*-1, x0, y0, x1, y1)
 		} else {
-			fmt.Println("OctantII")
+			// fmt.Println("OctantII")
 			image.drawLineOctantII(c, deltaY, deltaX*-1, x0, y0, x1, y1)
 		}
 	} else {
-		if math.Abs(float64(deltaY)) <= math.Abs(float64(deltaX)) {
-			fmt.Println("OctantVII")
+		if math.Abs(float64(deltaY)) >= math.Abs(float64(deltaX)) {
+			// fmt.Println("OctantVII")
 			image.drawLineOctantVII(c, deltaY, deltaX*-1, x0, y0, x1, y1)
 		} else {
-			fmt.Println("OctantVIII")
+			// fmt.Println("OctantVIII")
 			image.drawLineOctantVIII(c, deltaY, deltaX*-1, x0, y0, x1, y1)
 		}
 	}
@@ -137,23 +140,6 @@ func (image Image) drawLineOctantII(c Color, lA, lB, x0, y0, x1, y1 int) error {
 	return nil
 }
 
-func (image Image) drawLineOctantVIII(c Color, lA, lB, x0, y0, x1, y1 int) error {
-	y := y0
-	lD := 2*lA - lB
-	for x := x0; x < x1; x++ {
-		err := image.plot(c, x, y)
-		if err != nil {
-			return err
-		}
-		if lD < 0 {
-			y--
-			lD -= 2 * lB
-		}
-		lD += 2 * lA
-	}
-	return nil
-}
-
 func (image Image) drawLineOctantVII(c Color, lA, lB, x0, y0, x1, y1 int) error {
 	x := x0
 	lD := lA - 2*lB
@@ -167,6 +153,23 @@ func (image Image) drawLineOctantVII(c Color, lA, lB, x0, y0, x1, y1 int) error 
 			lD += 2 * lA
 		}
 		lD -= 2 * lB
+	}
+	return nil
+}
+
+func (image Image) drawLineOctantVIII(c Color, lA, lB, x0, y0, x1, y1 int) error {
+	y := y0
+	lD := 2*lA - lB
+	for x := x0; x < x1; x++ {
+		err := image.plot(c, x, y)
+		if err != nil {
+			return err
+		}
+		if lD < 0 {
+			y--
+			lD -= 2 * lB
+		}
+		lD += 2 * lA
 	}
 	return nil
 }
