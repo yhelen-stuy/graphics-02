@@ -21,9 +21,9 @@ type Image struct {
 }
 
 func MakeImage(height, width int) *Image {
-	img := make([][]Color, height)
+	img := make([][]Color, height+1)
 	for i := range img {
-		img[i] = make([]Color, width)
+		img[i] = make([]Color, width+1)
 	}
 	image := &Image{
 		img:    img,
@@ -82,7 +82,7 @@ func (image Image) DrawLine(c Color, x0, y0, x1, y1 int) error {
 		y1, y0 = y0, y1
 	}
 
-	fmt.Printf("Drawing (%d, %d) to (%d, %d)\n", x0, y0, x1, y1)
+	// fmt.Printf("Drawing (%d, %d) to (%d, %d)\n", x0, y0, x1, y1)
 
 	deltaX := x1 - x0
 	deltaY := y1 - y0
@@ -95,7 +95,7 @@ func (image Image) DrawLine(c Color, x0, y0, x1, y1 int) error {
 			image.drawLineOctantII(c, deltaY, deltaX*-1, x0, y0, x1, y1)
 		}
 	} else {
-		if math.Abs(float64(deltaY)) >= math.Abs(float64(deltaX)) {
+		if math.Abs(float64(deltaY)) > math.Abs(float64(deltaX)) {
 			// fmt.Println("OctantVII")
 			image.drawLineOctantVII(c, deltaY, deltaX*-1, x0, y0, x1, y1)
 		} else {
@@ -144,6 +144,7 @@ func (image Image) drawLineOctantVII(c Color, lA, lB, x0, y0, x1, y1 int) error 
 	x := x0
 	lD := lA - 2*lB
 	for y := y0; y > y1; y-- {
+		// fmt.Printf("(%d, %d)\n", x, y)
 		err := image.plot(c, x, y)
 		if err != nil {
 			return err
@@ -161,6 +162,7 @@ func (image Image) drawLineOctantVIII(c Color, lA, lB, x0, y0, x1, y1 int) error
 	y := y0
 	lD := 2*lA - lB
 	for x := x0; x < x1; x++ {
+		// fmt.Printf("(%d, %d)\n", x, y)
 		err := image.plot(c, x, y)
 		if err != nil {
 			return err

@@ -29,6 +29,9 @@ func main() {
 	// Octant VIII
 	image.DrawLine(Color{r: 0, g: 127, b: 127}, 250, 250, 450, 150)
 
+	image.DrawLine(Color{r: 0, g: 0, b: 0}, 0, 499, 499, 0)
+	image.DrawLine(Color{r: 0, g: 0, b: 0}, 0, 0, 499, 499)
+
 	image.DrawLine(Color{r: 0, g: 0, b: 0}, 0, 250, 499, 250)
 	image.DrawLine(Color{r: 0, g: 0, b: 0}, 250, 0, 250, 499)
 
