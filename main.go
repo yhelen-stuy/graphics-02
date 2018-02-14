@@ -2,7 +2,7 @@ package main
 
 func main() {
 	var image *Image
-	image = MakeImage(499, 499)
+	image = MakeImage(500, 500)
 	// Octant I (Or slope 1 which may not be I)
 	image.DrawLine(Color{r: 0, g: 255, b: 0}, 250, 250, 400, 350)
 	image.DrawLine(Color{r: 255, g: 0, b: 0}, 250, 250, 400, 400)

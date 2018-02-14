@@ -21,9 +21,9 @@ type Image struct {
 }
 
 func MakeImage(height, width int) *Image {
-	img := make([][]Color, height+1)
+	img := make([][]Color, height)
 	for i := range img {
-		img[i] = make([]Color, width+1)
+		img[i] = make([]Color, width)
 	}
 	image := &Image{
 		img:    img,
@@ -67,8 +67,9 @@ func (image Image) SavePPM(filename string) error {
 	for y := 0; y < image.width; y++ {
 		for x := 0; x < image.height; x++ {
 			newY := image.width - 1 - y
-			buffer.WriteString(fmt.Sprintf("%d %d %d\n", image.img[x][newY].r, image.img[x][newY].g, image.img[x][newY].b))
+			buffer.WriteString(fmt.Sprintf("%d %d %d ", image.img[x][newY].r, image.img[x][newY].g, image.img[x][newY].b))
 		}
+		buffer.WriteString("\n")
 	}
 
 	f.WriteString(buffer.String())
